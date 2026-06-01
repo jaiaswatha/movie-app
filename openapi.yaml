@@ -1,0 +1,128 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: movies
+    description: Movie operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /movies:
+    get:
+      operationId: listMovies
+      tags: [movies]
+      summary: List all movies
+      description: Returns a list of all movies
+      responses:
+        "200":
+          description: List of movies
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Movie"
+                required:
+                  - data
+  /movies/{id}:
+    get:
+      operationId: getMovie
+      tags: [movies]
+      summary: Get a single movie by ID
+      description: Returns a single movie by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Movie details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Movie"
+                required:
+                  - data
+        "404":
+          description: Movie not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+        original_title:
+          type: string
+        overview:
+          type: string
+        release_date:
+          type: string
+        runtime:
+          type: integer
+        status:
+          type: string
+        tagline:
+          type: string
+        title:
+          type: string
+        vote_average:
+          type: number
+        vote_count:
+          type: integer
+      required:
+        - id
+        - original_title
+        - overview
+        - release_date
+        - runtime
+        - status
+        - tagline
+        - title
+        - vote_average
+        - vote_count
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
